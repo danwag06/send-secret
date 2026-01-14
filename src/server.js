@@ -35,6 +35,7 @@ export function createServer({ encryptedBlob, filename, onDelivered }) {
         "Pragma": "no-cache",
         "Expires": "0",
         "Connection": "close",
+        "X-Robots-Tag": "noindex, nofollow, noarchive, nosnippet",
         ...securityHeaders,
       });
       res.end(getReceiverPage({ id, filename }));
