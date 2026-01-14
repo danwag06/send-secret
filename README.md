@@ -77,9 +77,10 @@ sk_live_abc123xyz
 │ https://abc123.trycloudflare.com/s/x7k2m#key=9f86d081884c7d659a2feaa0c       │
 ╰──────────────────────────────────────────────────────────────────────────────╯
   Keep terminal open until received
+  Recipient can also run: npx send-secret -r <link>
 
 ◐ Waiting for receiver...
-✔ Secret delivered and deleted
+✔ Retrieved from 73.162.45.99
 ```
 
 ### Send a file
@@ -94,9 +95,10 @@ $ send-secret ./credentials.json
 │ https://abc123.trycloudflare.com/s/x7k2m#key=9f86d081884c7d659a2feaa0c       │
 ╰──────────────────────────────────────────────────────────────────────────────╯
   Keep terminal open until received
+  Recipient can also run: npx send-secret -r <link>
 
 ◐ Waiting for receiver...
-✔ Secret delivered and deleted
+✔ Retrieved from 73.162.45.99
 ```
 
 ### Send via pipe
@@ -121,6 +123,22 @@ $ send-secret --timeout 60           # Expires in 60 seconds
 ```
 
 If the receiver doesn't retrieve the secret before the timeout, it's automatically deleted.
+
+### Multiple recipients
+
+Share with multiple people using a single link:
+
+```bash
+$ send-secret -n 3 ./credentials.json    # Allow 3 views
+$ send-secret -n 5 -t 300 ./secret.txt   # 5 views OR 5 minutes
+
+◐ Waiting for receivers... (0/3)
+✔ Retrieved (1/3) from 73.162.45.99
+✔ Retrieved (2/3) from 98.45.123.12
+✔ Retrieved (3/3) from 73.162.45.99 — All delivered
+```
+
+The sender sees each retrieval with the IP address for visibility.
 
 ### Receive via CLI
 

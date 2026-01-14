@@ -42,11 +42,13 @@ ${pc.cyan("OPTIONS")}
   ${pc.yellow("-r, --receive")}    Receive a secret from URL
   ${pc.yellow("-o, --output")}     Output file (receive mode)
   ${pc.yellow("-t, --timeout")}    Auto-destruct after N seconds (send mode)
+  ${pc.yellow("-n, --views")}      Max views before deletion (default: 1)
 
 ${pc.cyan("EXAMPLES")}
   ${pc.dim("$")} send-secret
   ${pc.dim("$")} send-secret ./credentials.json
   ${pc.dim("$")} send-secret -t 300 ./secret.txt  ${pc.dim("# expires in 5 min")}
+  ${pc.dim("$")} send-secret -n 3 ./secret.txt    ${pc.dim("# allow 3 views")}
   ${pc.dim("$")} echo "secret" | send-secret
   ${pc.dim("$")} pbpaste | send-secret
   ${pc.dim("$")} send-secret -r https://...#key=abc  ${pc.dim("# receive shortcut")}
@@ -65,6 +67,7 @@ export async function main() {
       output: { type: "string", short: "o" },
       timeout: { type: "string", short: "t" },
       receive: { type: "string", short: "r" },
+      views: { type: "string", short: "n" },
     },
   });
 
@@ -94,12 +97,20 @@ export async function main() {
     console.log(`\n${pc.red("✖")} ${pc.red("Error:")} Invalid timeout value`);
     process.exit(1);
   }
-  await sendSecret(positionals[0], timeout);
+
+  const maxViews = values.views ? parseInt(values.views, 10) : 1;
+  if (values.views && (isNaN(maxViews) || maxViews <= 0)) {
+    console.log(`\n${pc.red("✖")} ${pc.red("Error:")} Invalid views value`);
+    process.exit(1);
+  }
+
+  await sendSecret(positionals[0], timeout, maxViews);
 }
 
-async function sendSecret(filePath, timeoutSeconds = null) {
+async function sendSecret(filePath, timeoutSeconds = null, maxViews = 1) {
   let data;
   let filename = null;
+  let viewCount = 0;
 
   console.log();
 
@@ -157,33 +168,53 @@ async function sendSecret(filePath, timeoutSeconds = null) {
   // Start server
   let stopTunnel = () => {};
   let waitingSpinner = null;
+  let countdownInterval = null;
 
   const { server, id } = createServer({
     encryptedBlob,
     filename,
-    onDelivered: () => {
+    maxViews,
+    onView: ({ current, max, done, ip }) => {
+      viewCount = current;
+
+      // Stop current spinner
       if (waitingSpinner) {
-        waitingSpinner.success({
-          text: pc.green("Secret delivered and deleted"),
-        });
-      } else {
-        console.log(
-          `\n${pc.green("✔")} ${pc.green("Secret delivered and deleted")}`
-        );
+        waitingSpinner.stop();
       }
-      server.close();
-      stopTunnel();
-      printDonation();
-      process.exit(0);
+
+      if (done) {
+        // All views used
+        if (countdownInterval) clearInterval(countdownInterval);
+        if (max > 1) {
+          console.log(`${pc.green("✔")} Retrieved (${current}/${max}) from ${pc.dim(ip)} ${pc.green("— All delivered")}`);
+        } else {
+          console.log(`${pc.green("✔")} Retrieved from ${pc.dim(ip)}`);
+        }
+        server.close();
+        stopTunnel();
+        printDonation();
+        process.exit(0);
+      } else {
+        // More views remaining
+        console.log(`${pc.green("✔")} Retrieved (${current}/${max}) from ${pc.dim(ip)}`);
+        waitingSpinner = createSpinner(`Waiting for receivers... (${current}/${max})`).start();
+      }
     },
   });
 
   // Handle Ctrl+C at any point
   process.on("SIGINT", () => {
+    if (countdownInterval) clearInterval(countdownInterval);
     if (waitingSpinner) {
       waitingSpinner.stop();
     }
-    console.log(`\n${pc.yellow("○")} Cancelled. Secret was never delivered.`);
+    if (viewCount > 0 && maxViews > 1) {
+      console.log(`\n${pc.yellow("○")} Cancelled. ${viewCount} of ${maxViews} delivered.`);
+    } else if (viewCount > 0) {
+      console.log(`\n${pc.yellow("○")} Cancelled.`);
+    } else {
+      console.log(`\n${pc.yellow("○")} Cancelled. Secret was never delivered.`);
+    }
     server.close();
     stopTunnel();
     process.exit(0);
@@ -217,11 +248,15 @@ async function sendSecret(filePath, timeoutSeconds = null) {
       })
     );
 
-    if (!timeoutSeconds) {
-      console.log(pc.dim("  Keep terminal open until received\n"));
+    // Show appropriate subtitle
+    if (maxViews > 1) {
+      console.log(pc.dim(`  Can be viewed ${maxViews} times`));
+    } else if (!timeoutSeconds) {
+      console.log(pc.dim("  Keep terminal open until received"));
     } else {
-      console.log(); // Just add spacing
+      console.log();
     }
+    console.log(pc.dim(`  Recipient can also run: ${pc.cyan("npx send-secret -r <link>")}\n`));
 
     // Start waiting spinner
     if (timeoutSeconds) {
@@ -232,31 +267,44 @@ async function sendSecret(filePath, timeoutSeconds = null) {
         const sec = s % 60;
         return m > 0 ? `${m}m ${sec}s` : `${sec}s`;
       };
-      waitingSpinner = createSpinner(
-        `Waiting for receiver... ${pc.dim(`(expires in ${formatTime(remaining)})`)}`
-      ).start();
 
-      const countdownInterval = setInterval(() => {
+      const spinnerText = maxViews > 1
+        ? `Waiting for receivers... (0/${maxViews}) ${pc.dim(`(expires in ${formatTime(remaining)})`)}`
+        : `Waiting for receiver... ${pc.dim(`(expires in ${formatTime(remaining)})`)}`;
+
+      waitingSpinner = createSpinner(spinnerText).start();
+
+      countdownInterval = setInterval(() => {
         remaining--;
         if (remaining <= 0) {
           clearInterval(countdownInterval);
           if (waitingSpinner) {
             waitingSpinner.error({ text: pc.yellow("Timeout - secret expired") });
           }
-          console.log(
-            `\n${pc.yellow("○")} Secret auto-destructed after ${timeoutSeconds}s`
-          );
+          if (viewCount > 0 && maxViews > 1) {
+            console.log(
+              `\n${pc.yellow("○")} Secret auto-destructed after ${timeoutSeconds}s. ${viewCount} of ${maxViews} delivered.`
+            );
+          } else {
+            console.log(
+              `\n${pc.yellow("○")} Secret auto-destructed after ${timeoutSeconds}s`
+            );
+          }
           server.close();
           stopTunnel();
           process.exit(0);
         } else {
-          waitingSpinner.update({
-            text: `Waiting for receiver... ${pc.dim(`(expires in ${formatTime(remaining)})`)}`,
-          });
+          const text = maxViews > 1
+            ? `Waiting for receivers... (${viewCount}/${maxViews}) ${pc.dim(`(expires in ${formatTime(remaining)})`)}`
+            : `Waiting for receiver... ${pc.dim(`(expires in ${formatTime(remaining)})`)}`;
+          waitingSpinner.update({ text });
         }
       }, 1000);
     } else {
-      waitingSpinner = createSpinner("Waiting for receiver...").start();
+      const spinnerText = maxViews > 1
+        ? `Waiting for receivers... (0/${maxViews})`
+        : "Waiting for receiver...";
+      waitingSpinner = createSpinner(spinnerText).start();
     }
   } catch (err) {
     tunnelSpinner.error({ text: "Tunnel failed" });
