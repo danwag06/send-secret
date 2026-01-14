@@ -1,0 +1,59 @@
+{
+  "name": "send-secret",
+  "version": "0.1.0",
+  "description": "P2P encrypted secret sharing. No servers. No accounts. No trust required.",
+  "type": "module",
+  "bin": {
+    "send-secret": "bin/send-secret.js"
+  },
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "assets/banner.png",
+    "LICENSE",
+    "README.md",
+    "SECURITY.md"
+  ],
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": [
+    "secret",
+    "share",
+    "encrypt",
+    "p2p",
+    "security",
+    "cli",
+    "tunnel",
+    "cloudflare",
+    "aes",
+    "encryption"
+  ],
+  "author": "Dan Wagner",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danwagner/send-secret.git"
+  },
+  "bugs": {
+    "url": "https://github.com/danwagner/send-secret/issues"
+  },
+  "homepage": "https://github.com/danwagner/send-secret#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "boxen": "^8.0.1",
+    "cloudflared": "^0.5.0",
+    "nanospinner": "^1.2.2",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "vitest": "^2.0.0"
+  }
+}
