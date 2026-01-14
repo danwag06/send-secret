@@ -53,7 +53,7 @@ ${pc.cyan("EXAMPLES")}
   ${pc.dim("$")} send-secret receive https://abc.trycloudflare.com/s/xyz#key=abc
 
 ${pc.cyan("MORE INFO")}
-  ${pc.underline("https://github.com/danwagner/send-secret")}
+  ${pc.underline("https://github.com/danwag06/send-secret")}
 `;
 
 export async function main() {

@@ -214,7 +214,7 @@ export function getReceiverPage({ id, filename }) {
           <button onclick="copySecret()"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="5" y="5" width="9" height="9" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M11 5V3C11 1.89543 10.1046 1 9 1H3C1.89543 1 1 1.89543 1 3V9C1 10.1046 1.89543 11 3 11H5" stroke="currentColor" stroke-width="1.5"/></svg>Copy</button>
         </div>
         <div class="footer">
-          <a href="https://github.com/danwagner/send-secret" target="_blank" class="footer-brand">${GITHUB_SVG}<span>send-secret</span></a>
+          <a href="https://github.com/danwag06/send-secret" target="_blank" class="footer-brand">${GITHUB_SVG}<span>send-secret</span></a>
           <p class="footer-tagline">P2P encrypted sharing. No servers. No accounts. No trust required.</p>
           <p class="footer-cta">Start sending secrets securely</p>
           <code class="install-cmd">npm i -g send-secret</code>
@@ -242,7 +242,7 @@ export function getReceiverPage({ id, filename }) {
           <a href="\${url}" download="\${escapeHtml(name)}" class="btn"><svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1V10M8 10L4 6M8 10L12 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M1 11V13C1 14.1046 1.89543 15 3 15H13C14.1046 15 15 14.1046 15 13V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>Download file</a>
         </div>
         <div class="footer">
-          <a href="https://github.com/danwagner/send-secret" target="_blank" class="footer-brand">${GITHUB_SVG}<span>send-secret</span></a>
+          <a href="https://github.com/danwag06/send-secret" target="_blank" class="footer-brand">${GITHUB_SVG}<span>send-secret</span></a>
           <p class="footer-tagline">P2P encrypted sharing. No servers. No accounts. No trust required.</p>
           <p class="footer-cta">Start sending secrets securely</p>
           <code class="install-cmd">npm i -g send-secret</code>

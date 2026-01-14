@@ -1,6 +1,6 @@
 {
   "name": "send-secret",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "P2P encrypted secret sharing. No servers. No accounts. No trust required.",
   "type": "module",
   "bin": {
@@ -38,12 +38,12 @@
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/danwagner/send-secret.git"
+    "url": "git+https://github.com/danwag06/send-secret.git"
   },
   "bugs": {
-    "url": "https://github.com/danwagner/send-secret/issues"
+    "url": "https://github.com/danwag06/send-secret/issues"
   },
-  "homepage": "https://github.com/danwagner/send-secret#readme",
+  "homepage": "https://github.com/danwag06/send-secret#readme",
   "engines": {
     "node": ">=18.0.0"
   },
