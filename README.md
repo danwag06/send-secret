@@ -61,6 +61,20 @@ npx send-secret
 
 ---
 
+## VS Code Extension
+
+Share secrets directly from your editor:
+
+```bash
+ext install danwag06.send-secret
+```
+
+Or search **"send-secret"** in the VS Code extensions marketplace.
+
+Right-click any file or selection → **Send Secret** → link copied to clipboard.
+
+---
+
 ## Usage
 
 ### Send a text secret

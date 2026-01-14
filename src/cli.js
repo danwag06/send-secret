@@ -54,6 +54,10 @@ ${pc.cyan("EXAMPLES")}
   ${pc.dim("$")} send-secret -r https://...#key=abc  ${pc.dim("# receive shortcut")}
   ${pc.dim("$")} send-secret receive https://abc.trycloudflare.com/s/xyz#key=abc
 
+${pc.cyan("VS CODE EXTENSION")}
+  ${pc.dim("Search")} ${pc.bold("send-secret")} ${pc.dim("in the marketplace, or:")}
+  ${pc.green("ext install danwag06.send-secret")}
+
 ${pc.cyan("MORE INFO")}
   ${pc.underline("https://github.com/danwag06/send-secret")}
 `;

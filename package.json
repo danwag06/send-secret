@@ -1,7 +1,7 @@
 {
   "name": "send-secret",
-  "version": "0.2.0",
-  "description": "P2P encrypted secret sharing. No servers. No accounts. No trust required.",
+  "version": "0.3.0",
+  "description": "P2P encrypted secret sharing. No servers. No accounts. No trust required. VS Code extension available.",
   "type": "module",
   "bin": {
     "send-secret": "bin/send-secret.js"

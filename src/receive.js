@@ -56,7 +56,9 @@ export async function receiveSecret(url, outputPath) {
       if (response.status === 410) {
         throw new Error("This secret has already been viewed");
       }
-      throw new Error(`Failed to fetch: ${response.status} ${response.statusText}`);
+      throw new Error(
+        `Failed to fetch: ${response.status} ${response.statusText}`
+      );
     }
 
     const encryptedData = Buffer.from(await response.arrayBuffer());
@@ -75,13 +77,21 @@ export async function receiveSecret(url, outputPath) {
         const receivedDir = join(homedir(), ".send-secret", "received");
         mkdirSync(receivedDir, { recursive: true });
         // Add timestamp to prevent overwriting
-        const ext = filename.includes(".") ? filename.slice(filename.lastIndexOf(".")) : "";
-        const base = filename.includes(".") ? filename.slice(0, filename.lastIndexOf(".")) : filename;
-        const timestamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
+        const ext = filename.includes(".")
+          ? filename.slice(filename.lastIndexOf("."))
+          : "";
+        const base = filename.includes(".")
+          ? filename.slice(0, filename.lastIndexOf("."))
+          : filename;
+        const timestamp = new Date()
+          .toISOString()
+          .replace(/[:.]/g, "-")
+          .slice(0, 19);
         savePath = join(receivedDir, `${base}_${timestamp}${ext}`);
       } else {
         // If outputPath is a directory (or ends with /), append the original filename
-        const isDir = outputPath.endsWith("/") ||
+        const isDir =
+          outputPath.endsWith("/") ||
           (existsSync(outputPath) && statSync(outputPath).isDirectory());
         if (isDir) {
           mkdirSync(outputPath, { recursive: true });
@@ -112,7 +122,7 @@ export async function receiveSecret(url, outputPath) {
 
     // CTA
     console.log(pc.dim("  Start sending secrets securely:"));
-    console.log(`  ${pc.green("npm i -g send-secret")}\n`);
+    console.log(`  ${pc.green("npx send-secret")}\n`);
   } catch (err) {
     spinner.error({ text: "Failed" });
     console.log(`\n${pc.red("✖")} ${pc.red("Error:")} ${err.message}`);

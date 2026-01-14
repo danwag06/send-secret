@@ -1,0 +1,123 @@
+{
+  "name": "send-secret",
+  "displayName": "send-secret",
+  "description": "Share secrets via self-destructing encrypted links",
+  "version": "0.1.1",
+  "publisher": "danwag06",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/danwag06/send-secret"
+  },
+  "engines": {
+    "vscode": "^1.80.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [],
+  "main": "./out/extension.js",
+  "icon": "send-secret-logo.png",
+  "contributes": {
+    "commands": [
+      {
+        "command": "send-secret.send",
+        "title": "Send Secret"
+      },
+      {
+        "command": "send-secret.send3",
+        "title": "Send Secret (3 views)"
+      },
+      {
+        "command": "send-secret.send5",
+        "title": "Send Secret (5 views)"
+      },
+      {
+        "command": "send-secret.sendCustom",
+        "title": "Send Secret (Custom...)"
+      },
+      {
+        "command": "send-secret.showActive",
+        "title": "Send Secret: Show Active Shares"
+      }
+    ],
+    "configuration": {
+      "title": "send-secret",
+      "properties": {
+        "send-secret.defaultViews": {
+          "type": "number",
+          "default": 1,
+          "minimum": 1,
+          "maximum": 10,
+          "description": "Default number of views allowed per secret"
+        },
+        "send-secret.defaultTimeout": {
+          "type": "number",
+          "default": 0,
+          "minimum": 0,
+          "description": "Default timeout in seconds (0 = no timeout)"
+        }
+      }
+    },
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "send-secret.send",
+          "group": "navigation@1"
+        },
+        {
+          "command": "send-secret.sendCustom",
+          "group": "navigation@2"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "send-secret.send",
+          "group": "navigation@1"
+        },
+        {
+          "command": "send-secret.sendCustom",
+          "group": "navigation@2"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "send-secret.send"
+        },
+        {
+          "command": "send-secret.send3"
+        },
+        {
+          "command": "send-secret.send5"
+        },
+        {
+          "command": "send-secret.sendCustom"
+        },
+        {
+          "command": "send-secret.showActive"
+        }
+      ]
+    },
+    "keybindings": [
+      {
+        "command": "send-secret.send",
+        "key": "ctrl+shift+.",
+        "mac": "cmd+shift+.",
+        "win": "ctrl+shift+.",
+        "linux": "ctrl+shift+."
+      }
+    ]
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "prepackage": "npm run compile",
+    "package": "vsce package",
+    "publish": "vsce publish"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.80.0",
+    "@vscode/vsce": "^2.22.0",
+    "typescript": "^5.0.0"
+  }
+}
