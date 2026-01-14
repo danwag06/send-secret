@@ -3,12 +3,49 @@
 </p>
 
 <p align="center">
+  <strong>Stop sharing secrets through Slack, email, and text messages.</strong>
+</p>
+
+<p align="center">
   P2P encrypted secret sharing. No servers. No accounts. No trust required.
+</p>
+
+<p align="center">
+  <a href="#install">Install</a> •
+  <a href="#why">Why</a> •
+  <a href="#usage">Usage</a> •
+  <a href="#security">Security</a> •
+  <a href="#support">Support</a>
 </p>
 
 ---
 
-Your machine hosts the secret via a temporary tunnel. The receiver opens a link, decrypts in their browser, and it's gone. Nothing is ever stored on a third party.
+## The Problem
+
+Every day, developers share API keys, database credentials, and secrets through:
+
+- **Slack DMs** — stored forever on Slack's servers
+- **Email** — sitting in inboxes indefinitely
+- **Text messages** — backed up to iCloud, Google, carrier logs
+- **Notion/Docs** — accessible to anyone with the link
+- **`.env` files in repos** — we've all seen it
+
+These secrets persist. They get indexed. They get breached.
+
+## The Solution
+
+**send-secret** creates a one-time, encrypted link that self-destructs after viewing.
+
+```bash
+$ echo "sk_live_abc123" | npx send-secret
+```
+
+- **Zero trust** — Your machine encrypts the secret. The key never leaves the URL fragment.
+- **Zero persistence** — Deleted from memory the moment it's viewed. Nothing stored anywhere.
+- **Zero accounts** — No signups, no logins, no third-party services holding your secrets.
+- **Zero install** — Works with `npx`. No dependencies to audit.
+
+---
 
 ## Install
 
@@ -22,31 +59,7 @@ Or use without installing:
 npx send-secret
 ```
 
-## How It Works
-
-```
-Sender                         Receiver
-  │                               │
-  ├─ Encrypt secret locally       │
-  ├─ Start local server           │
-  ├─ Open Cloudflare tunnel       │
-  ├─ Generate URL with key        │
-  │   in fragment                 │
-  │                               │
-  ├─────── Share URL ────────────▶│
-  │                               │
-  │◀─────── Receiver opens URL ───┤
-  │                               │
-  ├─ Serve HTML + encrypted blob  │
-  │                               ├─ Decrypt in browser
-  │                               ├─ Display secret
-  ├─ Delete blob from memory      │
-  ├─ Close tunnel                 │
-  ├─ Exit                         │
-  │                               │
-  ▼                               ▼
-Done                            Done
-```
+---
 
 ## Usage
 
@@ -98,7 +111,7 @@ $ pbpaste | send-secret
 
 ### Auto-destruct timeout
 
-Set an expiration time for undelivered secrets with a live countdown:
+Set an expiration time for undelivered secrets:
 
 ```bash
 $ send-secret -t 300 ./secret.txt    # Expires in 5 minutes
@@ -109,12 +122,12 @@ $ send-secret --timeout 60           # Expires in 60 seconds
 
 If the receiver doesn't retrieve the secret before the timeout, it's automatically deleted.
 
-### Receive via CLI (optional)
+### Receive via CLI
 
 Receivers can open the link in a browser, or use the CLI:
 
 ```bash
-$ send-secret -r https://abc123.trycloudflare.com/s/x7k2m#key=9f86d081884c7d659a2feaa0c
+$ send-secret -r <url>
 # or
 $ send-secret receive <url>
 
@@ -126,10 +139,10 @@ $ send-secret receive <url>
 ╰─────────────────────╯
 ```
 
-Files are automatically saved to `~/.send-secret/received/` with timestamps to prevent overwrites:
+Files are automatically saved with timestamps to prevent overwrites:
 
 ```bash
-$ send-secret receive https://abc123.trycloudflare.com/s/x7k2m#key=9f86d081884c7d659a2feaa0c
+$ send-secret receive <url>
 
 ◐ Fetching secret...
 ✔ Secret retrieved
@@ -138,44 +151,92 @@ $ send-secret receive https://abc123.trycloudflare.com/s/x7k2m#key=9f86d081884c7
   cat "/Users/you/.send-secret/received/credentials_2025-01-14T10-30-45.json"
 ```
 
-Use `-o` to save to a custom path:
+Use `-o` to specify where to save:
 
 ```bash
-$ send-secret -r <url> -o ./credentials.json
+$ send-secret -r <url> -o ./              # Save to current dir with original filename
+$ send-secret -r <url> -o ./secrets/      # Save to specific directory
+$ send-secret -r <url> -o ./myfile.json   # Save with custom filename
 ```
+
+---
+
+## How It Works
+
+```
+Sender                         Receiver
+  │                               │
+  ├─ Encrypt secret locally       │
+  ├─ Start local server           │
+  ├─ Open Cloudflare tunnel       │
+  ├─ Generate URL with key        │
+  │   in fragment                 │
+  │                               │
+  ├─────── Share URL ────────────▶│
+  │                               │
+  │◀─────── Receiver opens URL ───┤
+  │                               │
+  ├─ Serve HTML + encrypted blob  │
+  │                               ├─ Decrypt in browser
+  │                               ├─ Display secret
+  ├─ Delete blob from memory      │
+  ├─ Close tunnel                 │
+  ├─ Exit                         │
+  │                               │
+  ▼                               ▼
+Done                            Done
+```
+
+The decryption key lives in the URL fragment (`#key=...`), which is **never sent to any server** — not even Cloudflare. Only someone with the full URL can decrypt the secret.
+
+---
 
 ## Security
 
-| Threat             | Protected? | How                                                  |
-| ------------------ | ---------- | ---------------------------------------------------- |
-| Server sees secret | ✓          | Encrypted before leaving sender's machine            |
-| Man-in-the-middle  | ✓          | Decryption key is in URL fragment, never transmitted |
-| Secret persists    | ✓          | Deleted from memory immediately after viewing        |
-| Sender's disk      | ✓          | Never written to disk, only in memory                |
-| Brute force        | ✓          | 256-bit key = 2^256 possibilities                    |
+| Threat | Protected | How |
+| --- | --- | --- |
+| Server sees secret | ✓ | Encrypted before leaving sender's machine |
+| Man-in-the-middle | ✓ | Decryption key in URL fragment, never transmitted |
+| Secret persists | ✓ | Deleted from memory immediately after viewing |
+| Sender's disk | ✓ | Never written to disk, only held in memory |
+| Brute force | ✓ | AES-256-GCM with 256-bit key (2²⁵⁶ possibilities) |
 
 ### What's NOT Protected
 
-- **Link interception**: If someone gets the full URL, they can view the secret
-- **Receiver's machine**: Once decrypted, it's in their browser/terminal
-- **Metadata**: Cloudflare can see IPs, timing, and payload size
+- **Link interception** — If someone gets the full URL, they can view the secret
+- **Receiver's machine** — Once decrypted, it's in their browser/terminal
+- **Metadata** — Cloudflare sees IPs, timing, and payload size (but not content)
+
+### Encryption Details
+
+- **Algorithm**: AES-256-GCM (authenticated encryption)
+- **Key**: 256-bit cryptographically random
+- **IV**: 96-bit random per encryption
+- **Key transmission**: URL fragment only (never sent to server)
+
+---
 
 ## Requirements
 
 - Node.js 18+
 - Internet connection (for Cloudflare tunnel)
 
+---
+
 ## License
 
 Apache-2.0
 
+---
+
 ## Support
 
-If send-secret is useful to you, consider supporting development:
+If send-secret saves you time, consider supporting development:
 
-- [Donate via Stripe](https://donate.stripe.com/3cI00jgSx2gvdd82Sk9Ve0f)
+**[Donate via Stripe](https://donate.stripe.com/3cI00jgSx2gvdd82Sk9Ve0f)**
 
 **Crypto:**
+
 | Currency | Address |
 |----------|---------|
 | BTC | `bc1qgel38lkck8vk4hpqjlzhjwg8rv39auahqxz7mg` |

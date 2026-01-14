@@ -1,5 +1,5 @@
 import { decrypt } from "./crypto.js";
-import { writeFileSync, mkdirSync } from "node:fs";
+import { writeFileSync, mkdirSync, existsSync, statSync } from "node:fs";
 import { homedir } from "node:os";
 import { join, basename } from "node:path";
 import pc from "picocolors";
@@ -79,6 +79,14 @@ export async function receiveSecret(url, outputPath) {
         const base = filename.includes(".") ? filename.slice(0, filename.lastIndexOf(".")) : filename;
         const timestamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
         savePath = join(receivedDir, `${base}_${timestamp}${ext}`);
+      } else {
+        // If outputPath is a directory (or ends with /), append the original filename
+        const isDir = outputPath.endsWith("/") ||
+          (existsSync(outputPath) && statSync(outputPath).isDirectory());
+        if (isDir) {
+          mkdirSync(outputPath, { recursive: true });
+          savePath = join(outputPath, filename);
+        }
       }
 
       writeFileSync(savePath, decrypted);
