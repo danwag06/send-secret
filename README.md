@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/banner.png" alt="send-secret" width="600">
+  <img src="https://ordfs.network/content/25743fecc82a4512e35f213a3442b8f367f2bec57221ba11a3f662435fcf414f_0" alt="send-secret" width="600">
 </p>
 
 <p align="center">
@@ -193,13 +193,13 @@ The decryption key lives in the URL fragment (`#key=...`), which is **never sent
 
 ## Security
 
-| Threat | Protected | How |
-| --- | --- | --- |
-| Server sees secret | ✓ | Encrypted before leaving sender's machine |
-| Man-in-the-middle | ✓ | Decryption key in URL fragment, never transmitted |
-| Secret persists | ✓ | Deleted from memory immediately after viewing |
-| Sender's disk | ✓ | Never written to disk, only held in memory |
-| Brute force | ✓ | AES-256-GCM with 256-bit key (2²⁵⁶ possibilities) |
+| Threat             | Protected | How                                               |
+| ------------------ | --------- | ------------------------------------------------- |
+| Server sees secret | ✓         | Encrypted before leaving sender's machine         |
+| Man-in-the-middle  | ✓         | Decryption key in URL fragment, never transmitted |
+| Secret persists    | ✓         | Deleted from memory immediately after viewing     |
+| Sender's disk      | ✓         | Never written to disk, only held in memory        |
+| Brute force        | ✓         | AES-256-GCM with 256-bit key (2²⁵⁶ possibilities) |
 
 ### What's NOT Protected
 
@@ -237,10 +237,10 @@ If send-secret saves you time, consider supporting development:
 
 **Crypto:**
 
-| Currency | Address |
-|----------|---------|
-| BTC | `bc1qgel38lkck8vk4hpqjlzhjwg8rv39auahqxz7mg` |
-| ETH | `0x8e9CeeaeF8beC7dfCa6D02B1c83f341217AA82F5` |
-| SOL | `FsT8cZ6naBc7vAmqt3bEzKreLgAHT9HaWrmC32wvii15` |
-| BCH | `qpykcppaaazfkt5dd3n6stswnxn4ehyxxc8m0z43v3` |
-| BSV | `1QFxtdewusnJsgyWWLviiZKEsDSsb77HPN` |
+| Currency | Address                                        |
+| -------- | ---------------------------------------------- |
+| BTC      | `bc1qgel38lkck8vk4hpqjlzhjwg8rv39auahqxz7mg`   |
+| ETH      | `0x8e9CeeaeF8beC7dfCa6D02B1c83f341217AA82F5`   |
+| SOL      | `FsT8cZ6naBc7vAmqt3bEzKreLgAHT9HaWrmC32wvii15` |
+| BCH      | `qpykcppaaazfkt5dd3n6stswnxn4ehyxxc8m0z43v3`   |
+| BSV      | `1QFxtdewusnJsgyWWLviiZKEsDSsb77HPN`           |
