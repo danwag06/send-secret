@@ -1,8 +1,8 @@
 ---
 name: send-secret-file
-version: 0.0.1
-description: This skill should be used when the user asks to "send a secret file", "share a file securely", "share credentials file", "send API keys file", "share .env securely", "encrypt and share file", "send config to teammate", "share SSH key", "send private key file", "share certificate file", or needs to share any sensitive file via P2P encrypted link. The file is encrypted locally and served via a one-time Cloudflare tunnel link.
-allowed-tools: Bash(npx send-secret*), Bash(test *), Bash(ls *)
+version: 0.0.2
+description: This skill should be used when the user asks to "send a secret file", "share a file securely", "share credentials file", "send API keys file", "share .env securely", "encrypt and share file", "send config to teammate", "share SSH key", "send private key file", "share certificate file", "share secrets.json", "share keyfile", "securely share file", "send secret to coworker", "share tokens file", "npx send-secret", "encrypted file sharing", "one-time link for file", "self-destructing file share", or needs to share any sensitive file via P2P encrypted link. The file is encrypted locally with AES-256-GCM and served via a one-time Cloudflare tunnel.
+allowed-tools: Bash(npx send-secret*), Bash(test *), Bash(ls *), Bash(mkdir *)
 ---
 
 # Send Secret File
@@ -110,4 +110,29 @@ Read secret.json, then send  # WRONG: agent sees content
 
 # NEVER echo secrets
 echo "sk_live_xxx" | npx send-secret  # WRONG: agent sees secret
+
+# NEVER commit secret files or send-secret URLs to git
+git add .  # WRONG: may include secret files
 ```
+
+## Example Interaction
+
+User: "I need to share my .env file with the new developer"
+
+Agent:
+1. Verify file: `test -f ./.env && echo "File exists"`
+2. Ask: "How many people need access? Should it expire?"
+
+User: "Just one person, no timeout needed"
+
+Agent:
+```bash
+npx send-secret ./.env
+```
+
+Response: "Here's your secure link: [URL]. Share this with the developer. Keep this terminal open until they retrieve it - the link is single-use and self-destructs after viewing."
+
+## Related Skills
+
+- **receive-secret** - For receiving secrets from send-secret URLs
+- **send-secret-clipboard** - For sharing clipboard contents (macOS)
