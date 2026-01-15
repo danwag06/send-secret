@@ -75,6 +75,42 @@ Right-click any file or selection → **Send Secret** → link copied to clipboa
 
 ---
 
+## AI Coding Agents
+
+Use send-secret with Claude Code, Cursor, Codex, and other AI coding agents.
+
+### Install Skills
+
+```bash
+npx add-skill danwag06/send-secret
+```
+
+This installs skills that let AI agents help you share secrets **without the agent ever seeing the secret content**:
+
+| Skill | Description |
+|-------|-------------|
+| `send-secret-file` | Send files by path (agent never reads content) |
+| `receive-secret` | Receive secrets to files (saves with `-o`, never displays) |
+| `send-secret-clipboard` | Share clipboard contents (macOS - agent never sees clipboard) |
+
+### Security Model
+
+The skills are designed so secrets **never enter the agent's context**:
+
+- Files are sent by **path only** — agent runs `send-secret ./file.json` without reading the file
+- Secrets are received **to files** — agent always uses `-o` flag to save, never displays in terminal
+- Clipboard is **piped directly** — `pbpaste | send-secret` bypasses agent context entirely
+
+### Example Usage
+
+Ask your AI agent:
+
+- "Send my .env file securely to my teammate"
+- "Receive this secret: https://xyz.trycloudflare.com/s/abc#key=..."
+- "Share what I copied to my clipboard securely"
+
+---
+
 ## Usage
 
 ### Send a text secret
