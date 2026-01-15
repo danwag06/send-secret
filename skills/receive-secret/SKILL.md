@@ -1,7 +1,7 @@
 ---
 name: receive-secret
-version: 0.0.1
-description: This skill should be used when the user asks to "receive a secret", "get a shared secret", "download encrypted file", "fetch secret from link", "retrieve secret URL", "open this link", "grab this secret", "get this file from URL", or provides a send-secret URL (containing trycloudflare.com and #key=). Receives P2P encrypted secrets and saves them to files without exposing content to the agent.
+version: 0.0.2
+description: This skill should be used when the user asks to "receive a secret", "get a shared secret", "download encrypted file", "fetch secret from link", "retrieve secret URL", "save this secret", "grab this secret", "get this file from URL", "download from trycloudflare", "get credentials from URL", "receive encrypted", "save secret to file", "fetch from this link", or provides a send-secret URL (URLs containing trycloudflare.com/s/ and #key= fragment). Receives P2P encrypted secrets and saves them to files without exposing content to the agent.
 allowed-tools: Bash(npx send-secret*), Bash(mkdir *)
 ---
 
@@ -166,3 +166,8 @@ git add .                       # WRONG: may include secret files
 - Add the file to `.gitignore` if it should stay in the project
 - Move it outside the repo if it's temporary
 - Never use `git add .` which may accidentally include secrets
+
+## Related Skills
+
+- **send-secret-file** - For sending files securely
+- **send-secret-clipboard** - For sharing clipboard contents (macOS)

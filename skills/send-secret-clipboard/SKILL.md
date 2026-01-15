@@ -1,7 +1,7 @@
 ---
 name: send-secret-clipboard
-version: 0.0.1
-description: This skill should be used when the user asks to "send clipboard as secret", "share what I copied", "send my clipboard securely", "share copied text", "share my clipboard", "send what's in my clipboard", or wants to share clipboard contents without the agent seeing them. macOS only - uses pbpaste to pipe clipboard directly to send-secret.
+version: 0.0.2
+description: This skill should be used when the user asks to "send clipboard as secret", "share what I copied", "send my clipboard securely", "share copied text", "share my clipboard", "send what's in my clipboard", "share copied credentials", "send copied password", "share clipboard with teammate", "send-secret from clipboard", "pbpaste send secret", "securely send what I copied", "share my password securely", or wants to share clipboard contents without the agent seeing them. macOS only - uses pbpaste to pipe clipboard directly to send-secret CLI.
 allowed-tools: Bash(pbpaste *), Bash(npx send-secret*)
 ---
 
@@ -136,3 +136,8 @@ pbpaste | npx send-secret -n 3 -t 300
 ```
 
 "Here's your secure link: [URL]. It can be viewed 3 times and expires in 5 minutes. Keep this terminal open until the ops team has retrieved it."
+
+## Related Skills
+
+- **send-secret-file** - For sharing files by path (when secret is in a file)
+- **receive-secret** - For receiving secrets from send-secret URLs
